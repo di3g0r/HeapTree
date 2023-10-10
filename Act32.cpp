@@ -13,9 +13,8 @@ class PriorityQueue{
         vector<Node*> PQ;
         int N, NumNodes;
     public:
-        PriorityQueue(int size){
-            N = size;
-            vector<Node*> PQ(size);
+        PriorityQueue(){
+            vector<Node*> PQ;
             NumNodes = -1;
         }
         ~PriorityQueue(){
@@ -24,8 +23,8 @@ class PriorityQueue{
             }
             std::cout << "Lista Borrada.\n";
         }
-        void Heapify(int);
-        void swap(int&, int&);
+        void Heapify(vector<Node*>, int);
+        void swap(Node*&, Node*&);
         void push(int, int);
         void pop();
         int top();
@@ -34,30 +33,32 @@ class PriorityQueue{
         void display();
 };
 
-void PriorityQueue::swap(int &a, int &b){
-    int temp;
+void PriorityQueue::swap(Node *&a, Node *&b){
+    Node* temp;
     temp = a;
     a = b;
     b = temp;
 }
 
-void PriorityQueue::Heapify(int i){
+void PriorityQueue::Heapify(vector<Node*> v, int i){
     int size = PQ.size();
 
     int largest = i;
     int l = 2*i+1;
     int r = 2*i+2;
 
-    if(l < size && PQ[l]->value > PQ[largest]->value){
+
+
+    if(l < size && v[l]->priority > v[largest]->priority){
         largest = l;
     }
-    if(r < size && PQ[r]->value > PQ[largest]->value){
+    if(r < size && v[r]->priority > v[largest]->priority){
         largest = r;
     }
 
     if(largest != i){
-        swap(PQ[i]->value, PQ[largest]->value);
-        Heapify(largest);
+        swap(v[i], v[largest]);
+        Heapify(v, largest);
     }
 }
 
