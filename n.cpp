@@ -3,6 +3,7 @@
 
 using namespace std;
 
+//Creamos el nodo
 struct Node{
     int value;
     int priority;
@@ -10,8 +11,8 @@ struct Node{
 
 class PriorityQueue{
     private:
+        int NumNodes;
         vector<Node*> PQ;
-        int N, NumNodes;
     public:
         PriorityQueue(){
             vector<Node*> PQ;
@@ -23,14 +24,19 @@ class PriorityQueue{
             }
             std::cout << "Lista Borrada.\n";
         }
-        void Heapify(vector<Node*>, int);
-        void swap(Node*&, Node*&);
-        void push(int, int);
-        void pop();
-        int top();
-        bool empty();
-        int size();
-        void display();
+       void Heapify(vector<Node*> &v,int index);
+       void MaxHeap();
+
+       void push(int data, int prior);
+       void pop();
+
+       void swap(Node *&a, Node *&b);
+
+       int peek();
+       bool empty();
+       int size();
+       void deleteAll();
+       void display();
 };
 
 void PriorityQueue::swap(Node *&a, Node *&b){
@@ -40,14 +46,12 @@ void PriorityQueue::swap(Node *&a, Node *&b){
     b = temp;
 }
 
-void PriorityQueue::Heapify(vector<Node*> v, int i){
-    int size = PQ.size();
+void PriorityQueue::Heapify(vector<Node*> &v,int index){
+    int size = v.size();
 
-    int largest = i;
-    int l = 2*i+1;
-    int r = 2*i+2;
-
-
+    int largest = PQ[index]->priority;
+    int l = 2 * index + 1;
+    int r = 2 * index + 2;
 
     if(l < size && v[l]->priority > v[largest]->priority){
         largest = l;
@@ -56,24 +60,28 @@ void PriorityQueue::Heapify(vector<Node*> v, int i){
         largest = r;
     }
 
-    if(largest != i){
-        swap(v[i], v[largest]);
+    if(largest != index){
+        swap(v[index], v[largest]);
         Heapify(v, largest);
     }
 }
 
-void PriorityQueue::push(int value, int prior){
-    if (NumNodes == N-1) {
-        std::cout << "La lista esta llena\n";
-        return;
+void PriorityQueue::MaxHeap(){
+    int size = PQ.size();
+
+    for(int i = size / 2 - 1;i >= 0; i--){
+        Heapify(PQ, i);
     }
+}
+
+void PriorityQueue::push(int data, int prior){
 
     NumNodes++;
 
-    PQ[NumNodes]->value = value;
+    PQ[NumNodes]->value = data;
     PQ[NumNodes]->priority = prior;
 
-    Heapify(0);
+    MaxHeap();
 }
 
 void PriorityQueue::pop(){
@@ -99,33 +107,18 @@ void PriorityQueue::pop(){
             }
         }
     }
+    NumNodes--;
     delete PQ[mayorIndex];
+    MaxHeap();
 }
 
-int PriorityQueue::top(){
+int PriorityQueue::peek(){
     if (NumNodes == -1){
         std::cout << "La lista esta vacia\n";
         return;
     }
 
-    int mayorIndex = 0;
-    int numV = PQ[0]->value;
-    int numP = PQ[0]->priority;
-
-    for(int i=0; i < PQ.size();i++){
-        if(PQ[i]->priority > numP){
-            numP = PQ[i]->priority;
-            numV = PQ[i]->value;
-            mayorIndex = i;
-        }
-        else if(PQ[i]->priority == numP){
-            if(PQ[i]->value > numV){
-                numV = PQ[i]->value;
-                mayorIndex = i;
-            }
-        }
-    }
-    return PQ[mayorIndex]->value;
+    return PQ[0]->priority;
 }
 
 bool PriorityQueue::empty(){
@@ -134,40 +127,44 @@ bool PriorityQueue::empty(){
         return true;
     }
 
-    else{
-        std::cout << "La lista tiene elementos\n";
-        return false;
-    }
+    std::cout << "La lista tiene elementos\n";
+    return false;
 }
 
 int PriorityQueue::size(){
-    return NumNodes + 1;
+    return PQ.size();
+}
+
+void PriorityQueue::deleteAll(){
+    for(int i=0; i < PQ.size(); i++){
+            delete PQ[i];
+        }
+    std::cout << "Lista Borrada.\n";
 }
 
 void PriorityQueue::display(){
     std::cout << "Elementos: ";
-    for(int i=0; i<= NumNodes; i++){
+    for(int i=0; i<= PQ.size(); i++){
         std::cout << PQ[i]->value << " ";
     }
     std::cout << "\n";
     std::cout << "Prioridad: ";
-    for(int i=0; i<= NumNodes; i++){
-        std::cout << PQ[i]->priority << " ";
+    for(int j=0; j<= PQ.size(); j++){
+        std::cout << PQ[j]->priority << " ";
     }
     std::cout << "\n";
 }
 
+
+
 int main(){
-    PriorityQueue PQ;
 
-    PQ.push(2, 1);
-    PQ.push(9, 3);
-    PQ.push(3, 4);
-    PQ.push(1, 2);
-    PQ.push(5, 1);
-    PQ.push(4, 2);
+    PriorityQueue cola;
 
-    PQ.display();
+    cola.push(2,3);
+    cola.push(4,1);
+    cola.push(5,6);
 
+    cola.display();
     return 0;
 }
